@@ -57,8 +57,8 @@ public class ConnectorHandler {
 
     @PostConstruct
     public void insertDatabaseStartParameters() {
-        String createTableQuery = "INSERT INTO t_item(f_id, f_name, f_status, f_deleted)" +
-                " VALUES (1, 'Test Item','ready',0)";
+        String createTableQuery = "INSERT INTO t_item( f_name, f_status, f_deleted)" +
+                " VALUES ('Test Item','ready',0)";
         executeQuery(createTableQuery);
     }
 

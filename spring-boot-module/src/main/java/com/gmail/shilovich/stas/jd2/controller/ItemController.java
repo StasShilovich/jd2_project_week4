@@ -1,4 +1,4 @@
-package com.gmail.shilovich.stas.jd2;
+package com.gmail.shilovich.stas.jd2.controller;
 
 import com.gmail.shilovich.stas.jd2.servicemodule.ItemService;
 import com.gmail.shilovich.stas.jd2.servicemodule.model.ItemDTO;
@@ -25,10 +25,21 @@ public class ItemController {
         this.itemService = itemService;
     }
 
-    @GetMapping("/home")
+    @GetMapping("/items")
     public String getItems(Model model) {
         List<ItemDTO> list = itemService.getItems();
         model.addAttribute(list);
         return "items";
     }
+
+    @GetMapping("/")
+    public String home() {
+        return "home";
+    }
+
+    @GetMapping("/login")
+    public String getLogin() {
+        return "login";
+    }
+
 }

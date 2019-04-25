@@ -2,7 +2,8 @@ package com.gmail.shilovich.stas.jd2.datamodule.model;
 
 public enum ItemStatusEnum {
     READY("ready"),
-    COMPLETED("completed");
+    STEADY("steady"),
+    GO("go");
 
     private String statusName;
 
