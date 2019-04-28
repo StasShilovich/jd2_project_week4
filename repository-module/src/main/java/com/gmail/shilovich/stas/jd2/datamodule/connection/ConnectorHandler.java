@@ -1,5 +1,6 @@
 package com.gmail.shilovich.stas.jd2.datamodule.connection;
 
+import com.gmail.shilovich.stas.jd2.datamodule.connection.sql.SQLReader;
 import com.gmail.shilovich.stas.jd2.datamodule.exception.DatabaseException;
 import com.gmail.shilovich.stas.jd2.datamodule.properties.DatabaseProperties;
 import org.apache.logging.log4j.LogManager;
@@ -21,9 +22,10 @@ public class ConnectorHandler {
     private static final Logger logger = LogManager.getLogger(ConnectorHandler.class);
     private static final String ERROR_MESSAGE = "Connection failed";
     private final DatabaseProperties databaseProperties;
+    private final SQLReader sqlReader;
 
     @Autowired
-    public ConnectorHandler(DatabaseProperties databaseProperties) {
+    public ConnectorHandler(DatabaseProperties databaseProperties, SQLReader sqlReader) {
         try {
             Class.forName(databaseProperties.getDriver());
         } catch (ClassNotFoundException e) {
@@ -31,6 +33,7 @@ public class ConnectorHandler {
             throw new DatabaseException(ERROR_MESSAGE, e);
         }
         this.databaseProperties = databaseProperties;
+        this.sqlReader = sqlReader;
     }
 
     public Connection getConnection() {
@@ -49,26 +52,36 @@ public class ConnectorHandler {
 
     @PostConstruct
     public void createDatabaseTables() {
-        String createTableQuery = "CREATE TABLE IF NOT EXISTS t_item(f_id INT NOT NULL AUTO_INCREMENT," +
-                " f_name  VARCHAR(40) NOT NULL, f_status VARCHAR(45) NOT NULL," +
-                " f_deleted TINYINT NOT NULL, PRIMARY KEY (f_id))";
-        executeQuery(createTableQuery);
+        executeFile("/static/tables.sql");
     }
 
-    @PostConstruct
-    public void insertDatabaseStartParameters() {
-        String createTableQuery = "INSERT INTO t_item( f_name, f_status, f_deleted)" +
-                " VALUES ('Test Item','ready',0)";
-        executeQuery(createTableQuery);
-    }
+//    @PostConstruct
+//    public void insertForeignKey() {
+//        executeFile("/static/foreignKey.sql");
+//    }
 
-    private void executeQuery(String createTableQuery) {
+//    @PostConstruct
+//    public void insertDatabaseStartParameters() {
+//        executeFile("/static/startParameters.sql");
+//    }
+
+    private void executeFile(String path) {
+        String result = sqlReader.parseSQL(path);
+        String[] array = result.split(";");
         try (Connection connection = getConnection()) {
             connection.setAutoCommit(false);
             try (Statement statement = connection.createStatement()) {
-                statement.execute(createTableQuery);
+                /*
+                 Arrays.stream(array)
+                        .map(String::trim)
+                        .map(statement::addBatch);
+                 */
+                for (String s : array) {
+                    statement.addBatch(s.trim());
+                }
+                statement.executeBatch();
                 connection.commit();
-            } catch (Exception e) {
+            } catch (SQLException e) {
                 logger.error(ERROR_MESSAGE, e);
                 connection.rollback();
             }
