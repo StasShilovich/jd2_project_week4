@@ -40,12 +40,11 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public List<ItemDTO> getItems() {
-        List<Item> items = null;
         List<ItemDTO> list = null;
         try (Connection connection = connectorHandler.getConnection()) {
             try {
                 connection.setAutoCommit(false);
-                items = itemRepository.getItems(connection);
+                List<Item> items = itemRepository.getItems(connection);
                 list = items.stream()
                         .map(itemConverter::toDTO)
                         .collect(Collectors.toList());

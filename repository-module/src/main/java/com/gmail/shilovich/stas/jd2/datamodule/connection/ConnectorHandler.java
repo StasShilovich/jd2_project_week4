@@ -71,11 +71,6 @@ public class ConnectorHandler {
         try (Connection connection = getConnection()) {
             connection.setAutoCommit(false);
             try (Statement statement = connection.createStatement()) {
-                /*
-                 Arrays.stream(array)
-                        .map(String::trim)
-                        .map(statement::addBatch);
-                 */
                 for (String s : array) {
                     statement.addBatch(s.trim());
                 }

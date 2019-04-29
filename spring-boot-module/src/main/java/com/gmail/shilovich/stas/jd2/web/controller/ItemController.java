@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import java.util.List;
 
 @Controller
-@EnableAutoConfiguration
 public class ItemController {
 
     private static final Logger logger = LoggerFactory.getLogger(ItemController.class);
