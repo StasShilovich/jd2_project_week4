@@ -1,0 +1,22 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Items</title>
+</head>
+<body>
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Name</th>
+            <th>Status</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="item:${list}">
+            <td th:text="${item.name}"></td>
+            <td th:text="${item.status}"></td>
+        </tr>
+        </tbody>
+    </table>
+</body>
+</html>
